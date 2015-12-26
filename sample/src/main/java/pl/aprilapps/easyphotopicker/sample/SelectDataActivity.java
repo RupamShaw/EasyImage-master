@@ -94,6 +94,9 @@ public class SelectDataActivity extends AppCompatActivity {
         {
             TextView userName;
             TextView duration;
+            TextView floatingText;
+            ImageView listImageView1;
+            ImageView   listImageView2;
         }
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView;
@@ -111,10 +114,16 @@ public class SelectDataActivity extends AppCompatActivity {
             if (UserDetailpos != null) {
                 holder.userName =(TextView) rowView.findViewById(R.id.userslidenamelisttext);
                 holder.duration=(TextView) rowView.findViewById(R.id.durationlisttext);
-                System.out.println("before set");
+                holder.floatingText=(TextView) rowView.findViewById(R.id.floatingTextlisttext);
+                holder.listImageView1=(ImageView)rowView.findViewById(R.id.listimageView1);
+                holder.listImageView2=(ImageView)rowView.findViewById(R.id.listimageView2);
+                System.out.println("before set for saving in list");
                 holder.userName .setText(UserDetailpos.getNameReason());
-                holder.duration.setText(UserDetailpos.getDuration()+"");
-                System.out.println("all set");
+                holder.duration.setText(UserDetailpos.getDuration() + "");
+                holder.floatingText.setText(UserDetailpos.getFloatingText());
+                holder.listImageView1.setImageURI(UserDetailpos.getImage1());
+                holder.listImageView2.setImageURI(UserDetailpos.getImage2());
+                System.out.println("all set after saving in list displayed ");
             }
            rowView.setOnClickListener(new View.OnClickListener() {
                 @Override

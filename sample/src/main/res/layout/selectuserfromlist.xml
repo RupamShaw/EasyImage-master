@@ -4,15 +4,42 @@
     android:weightSum="1">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/userslidenamelisttext" />
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:text="rups"
+        android:id="@+id/userslidenamelisttext"
+         />
 
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/durationlisttext"
-        android:layout_weight="0.28" />
+        android:text="20"
+         />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="23dp"
+        android:id="@+id/listimageView1"
+        android:contentDescription="image1in list"
+        android:layout_weight="0.20"
+        android:src="@mipmap/ic_launcher" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="23dp"
+        android:id="@+id/listimageView2"
+        android:contentDescription="image2inlist"
+
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/floatingTextlisttext"
+
+        android:text="write about selct image for slide show" />
+
 </LinearLayout>

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,9 +23,9 @@ import android.widget.ViewFlipper;
  it	0	1	0	1	0	1	0	1
  i	0	1	2	3	4	5	6	7
  im	1	2	1	2	1	2	1	2
- dur	dec	sa	dec	s	dec	s	dec	s
+ durdec	con	dec	con dec	con d   c
 
-
+iteration/sec
  6	6	6	5	6	4	6	3	6	2	6	1	6
  5	5	5	4	5	3	5	2	5	1	5
  4	4	4	3	4	2	4	1	4
@@ -46,9 +45,9 @@ public class ViewFlipperActivity extends AppCompatActivity {
     private ViewFlipper mViewFlipper;
     private Animation.AnimationListener mAnimationListener;
     private Context mContext;
-    Handler handler;
-    Runnable runble;
-  // Runnable  runble=new MyRunnable(1000);
+    Toast t;
+//    Handler handler;
+  //  Runnable runble;
     @SuppressWarnings("deprecation")
     private final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
     class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -131,7 +130,7 @@ public class ViewFlipperActivity extends AppCompatActivity {
 
             mViewFlipper.addView(imageView);
         }
-             handler=new Handler();
+//             handler=new Handler();
         if (duration!=0){
             AsyncTaskRunner runner = new AsyncTaskRunner();
            // String sleepTime = time.getText().toString();
@@ -175,82 +174,6 @@ public class ViewFlipperActivity extends AppCompatActivity {
          handler.removeCallbacks(runble);
             handler.postDelayed(runble, dur);
             System.out.println("before handler postdelayed dur" + dur);*/
-        /* for(int i=0;i<duration;++i) {
-               System.out.println("in loop assin dur" + duration);
-               runble= new MyRunnable(dur);
-
-               handler.removeCallbacks(runble);
-               handler.postDelayed(runble, dur );
-               dur=dur-1000;
-           }*/
-       /*    final int dur=duration*1000;
-            final int chk=0;
-        runnable = new Runnable() {
-                int y=dur;
-            public void run() {
-                System.out.println("in run ");
-               int dura=dur;
-               if(chk==0) {
-                  // while (dura>=0){
-                    handler.postDelayed(runnable, dura);
-                    mViewFlipper.showNext();
-                    System.out.println("next image after " + dura);
-                    dura=dura-1000;
-                   // dur=dur-1000;
-
-
-                }else{
-                    //mViewFlipper.setDisplayedChild(1);
-
-                   y=y-1000;
-                    handler.postDelayed(runnable, y);
-                   System.out.println("yyyy next image after " + y);
-                   if(y!=0)
-                   mViewFlipper.showNext();
-                   // dura=dura-1000;
-                }
-            }
-        };*/
-           /* int di=dur;
-            Message msg = new Message();
-            System.out.println("start duration");
-            handler = new Handler();
-
-            while (di>=0) {
-                System.out.println("in while loop di"+di);
-                msg.arg1 = di;
-               // handler.removeMessages(0);
-                handler.sendMessageDelayed(msg,di);
-                System.out.println("after send msg di"+di);
-              //  handler.sendMessage(msg);
-                di=    di - 1000;
-            }
-            handler = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    int byteData = msg.arg1;
-                    System.out.println("in handler bytedata"+byteData);
-                    // update the EditText
-                   // while (byteData>0) {
-                     //   byteData=    byteData - 1000;
-                       // handler.postDelayed(runble, byteData - 1000);
-                        mViewFlipper.setFlipInterval(byteData);
-                    mViewFlipper.setAutoStart(true);
-                 //   mViewFlipper.setFlipInterval(duration);
-                    mViewFlipper.startFlipping();
-                       // mViewFlipper.showNext();
-                        System.out.println("in run byteData "+byteData);
-                   // }
-                    if(byteData==0) {
-                        //handler.removeCallbacks(runble);
-                        System.out.println("in byteData==0 " );
-                    }
-                }
-            };
-
-       // handler.postDelayed(new MyRunnable(duration), duration);
-
-*/
             System.out.println("handler starts here end of if duration");
         }//if duration
         }//if listimage length
@@ -281,10 +204,16 @@ public class ViewFlipperActivity extends AppCompatActivity {
             public void onClick(View view) {
                 System.out.println("in play onclick");
                 //sets auto flipping
-                mViewFlipper.setAutoStart(true);
-                mViewFlipper.setFlipInterval(duration);
-                mViewFlipper.startFlipping();
-              //  mViewFlipper.isFlipping()
+                /*{
+                    mViewFlipper.setAutoStart(true);
+                    mViewFlipper.setFlipInterval(duration);
+                    mViewFlipper.startFlipping();
+                }*/
+               if(duration!=0) {
+                   AsyncTaskRunner runner = new AsyncTaskRunner();
+                   // String sleepTime = time.getText().toString();
+                   runner.execute(duration + "");
+               }
             }
         });
 
@@ -336,7 +265,7 @@ public class ViewFlipperActivity extends AppCompatActivity {
 
         }
         else
-            Toast.makeText(this, "No folder with name images..", Toast.LENGTH_LONG).show();*/
+          //  Toast.makeText(this, "No folder with name images..", Toast.LENGTH_LONG).show();*/
         System.out.println("end of setting images");
         /* setImagesToFlipper() add ImageViews dynamically to the ViewFlipper.*/
 
@@ -346,7 +275,7 @@ public class ViewFlipperActivity extends AppCompatActivity {
                 System.out.println(" mAnimationListener  onAnimationStart");
                 //animation started event
                 int childCount = mViewFlipper.getChildCount();
-                Toast.makeText(ViewFlipperActivity.this, "image count in start"+childCount, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ViewFlipperActivity.this, "image count in start"+childCount, Toast.LENGTH_SHORT).show();
             }
 
             public void onAnimationRepeat(Animation animation) {
@@ -358,7 +287,7 @@ public class ViewFlipperActivity extends AppCompatActivity {
                 System.out.println(" mAnimationListener  onAnimationEnd");
                 int displayedChild = mViewFlipper.getDisplayedChild();
                 int childCount = mViewFlipper.getChildCount();
-                Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+"displayedChild"+"/"+childCount, Toast.LENGTH_SHORT).show();
+             //  Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount, Toast.LENGTH_SHORT).show();
                 if (displayedChild == childCount - 1) {
                     mViewFlipper.stopFlipping();
                 }            }
@@ -475,13 +404,15 @@ public class ViewFlipperActivity extends AppCompatActivity {
 
                if (displayedChild == 0  && it==0) {
                     mViewFlipper.setFlipInterval(time);
-                    System.out.println(" 0000000000000th child on progressupdate displayed child 0 or first child time " + time+" i "+part2+" it "+it);
-                    Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+time+"sec",Toast.LENGTH_SHORT ).show();
+                    System.out.println(" 0000000000000th child on progressupdate displayed child 0 or first child time " + time + " i " + part2 + " it " + it);
+                 // Toast t=  Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+time+"sec",Toast.LENGTH_SHORT );
+                  //        t.show();
                     mViewFlipper.showNext();
                 }else if(displayedChild == 1 && it==1) {
                     mViewFlipper.setFlipInterval(duration);
-                    Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+duration+"sec",Toast.LENGTH_SHORT ).show();
-                    System.out.println("111111111111 child in  progressupdate displayed child others duration " + duration+" i "+part2+" it "+it);
+                  // Toast t=Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+duration+"sec",Toast.LENGTH_SHORT );
+                  // t.show();
+                   System.out.println("111111111111 child in  progressupdate displayed child others duration " + duration+" i "+part2+" it "+it);
                     if(numtype==((2*duration/1000)-1)){
                         //System.out.println("loop last its last and no more flipping" );
                     }
