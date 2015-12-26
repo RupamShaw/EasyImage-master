@@ -22,7 +22,7 @@
         android:layout_width="50dp"
         android:layout_height="23dp"
         android:id="@+id/listimageView1"
-        android:contentDescription="image1in list"
+        android:contentDescription="image1inlist"
         android:layout_weight="0.20"
         android:src="@mipmap/ic_launcher" />
 
