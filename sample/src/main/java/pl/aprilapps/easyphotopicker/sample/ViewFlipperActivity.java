@@ -1,13 +1,11 @@
 package pl.aprilapps.easyphotopicker.sample;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -19,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
 /**
  it	0	1	0	1	0	1	0	1
  i	0	1	2	3	4	5	6	7
@@ -46,9 +45,13 @@ public class ViewFlipperActivity extends AppCompatActivity {
     private Animation.AnimationListener mAnimationListener;
     private Context mContext;
     Toast t;
+    int looptime=0;////for ondestroy() all asynctask cancel
+    AsyncTaskRunner runner;
+    MediaPlayer mediaPlayer;
+    AsyncTaskRunner[] a;
 //    Handler handler;
   //  Runnable runble;
-    @SuppressWarnings("deprecation")
+
     private final GestureDetector detector = new GestureDetector(new SwipeGestureDetector());
     class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         @Override
@@ -81,6 +84,18 @@ public class ViewFlipperActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mediaPlayer != null) mediaPlayer.release();
+        int l=looptime;
+       // System.out.println("ondestroy looptime"+l);
+        while(l!=0) {
+            l=l-1;
+            System.out.println("ondestroy looptime" + l + "a[l].isCancelled()" + a[l].isCancelled());
+           if(a[l].isCancelled()==false){
+               System.out.println("ondestroy before cancel");
+                a[l].cancel(true);}
+         }
+        //runner.cancel(true);
+        finish();
         System.gc();
     }
 
@@ -89,37 +104,63 @@ public class ViewFlipperActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_flipper);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+      //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+      //  setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         System.out.println("oncreate");
         mContext = this;
         mViewFlipper = (ViewFlipper) this.findViewById(R.id.viewFlipper);
         Bundle extras=getIntent().getExtras();
+        String musicpath=extras.getString("musicPath");
+
+        Uri musicUri = Uri.parse(musicpath);
+    //   System.out.println("musicpath "+musicpath+" musicUri "+musicUri);
+
+       try {
+        //   mediaPlayer = new MediaPlayer();
+
+           // mediaPlayer = MediaPlayer.create(this, R.raw.sample_song);
+          // mediaPlayer.setDataSource(this, musicUri);
+           mediaPlayer = MediaPlayer.create(this,musicUri);
+        // mediaPlayer.create(this, musicUri);
+
+          // mediaPlayer.prepare();
+           mediaPlayer.setLooping(true);
+           mediaPlayer.start();
+
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+
+
         String[] imagelist = extras.getStringArray("listofimage");
          final int duration=extras.getInt("duration");
-        if(imagelist.length!=0) {
-            for(int i=0;i<imagelist.length;++i){
-           // String stringUri = imagelist[i];
-            Uri imageUri = Uri.parse(imagelist[i]);
-            ImageView imageView = new ImageView(this);
-            imageView.setImageURI(imageUri);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setAdjustViewBounds(true);
+         int loop=extras.getInt("loop");
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-            params.gravity = Gravity.CENTER;
+        loop=loop+1;
 
-            imageView.setLayoutParams(params);
+        if (imagelist.length != 0) {
+            for (int i = 0; i < imagelist.length; ++i) {
+                // String stringUri = imagelist[i];
+                Uri imageUri = Uri.parse(imagelist[i]);
+                ImageView imageView = new ImageView(this);
+                imageView.setImageURI(imageUri);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setAdjustViewBounds(true);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+                params.gravity = Gravity.CENTER;
+
+                imageView.setLayoutParams(params);
 
          /*android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -128,13 +169,29 @@ public class ViewFlipperActivity extends AppCompatActivity {
         android:scaleType="centerCrop"*/
 
 
-            mViewFlipper.addView(imageView);
-        }
+                mViewFlipper.addView(imageView);
+            }//for image
 //             handler=new Handler();
-        if (duration!=0){
-            AsyncTaskRunner runner = new AsyncTaskRunner();
-           // String sleepTime = time.getText().toString();
-            runner.execute(duration+"");
+            looptime=loop;
+            if (duration != 0) {
+                 a = new AsyncTaskRunner[loop];
+             //for ondestroy
+                while(loop!=0) {
+                    System.out.println("**********loop "+loop);
+
+                    int l=loop-1;
+                    a[l]=new AsyncTaskRunner();
+                    System.out.println("**********loop "+loop+" a["+l+"] "+a[l]);
+                  //  AsyncTaskRunner runner;
+               // runner[loop] = new AsyncTaskRunner();
+                // String sleepTime = time.getText().toString();
+                //runner.execute(duration + "");
+                    a[l].execute(duration + "",looptime+ "",l+ "");
+                    loop--;
+                }//while loop
+
+           //     runner = new AsyncTaskRunner();
+             //   runner.execute(duration + "");
      /*    class MyRunnable implements Runnable {
                 int byteData;
 
@@ -174,10 +231,10 @@ public class ViewFlipperActivity extends AppCompatActivity {
          handler.removeCallbacks(runble);
             handler.postDelayed(runble, dur);
             System.out.println("before handler postdelayed dur" + dur);*/
-            System.out.println("handler starts here end of if duration");
-        }//if duration
+                System.out.println("handler starts here end of if duration");
+            }//if duration
         }//if listimage length
-/*        btnTakePhoto = new Button(this);
+    /*        btnTakePhoto = new Button(this);
         btnTakePhoto.setBackgroundResource(android.R.drawable.ic_menu_camera);
 
 
@@ -212,7 +269,8 @@ public class ViewFlipperActivity extends AppCompatActivity {
                if(duration!=0) {
                    AsyncTaskRunner runner = new AsyncTaskRunner();
                    // String sleepTime = time.getText().toString();
-                   runner.execute(duration + "");
+
+                   runner.execute(duration + "",looptime+ "",0+ "");
                }
             }
         });
@@ -300,36 +358,44 @@ public class ViewFlipperActivity extends AppCompatActivity {
 
         private String resp="";
         private int duration;
-
+        //private boolean running = true;
+/*
+        @Override
+        protected void onCancelled() {
+            running = false;
+        }*/
         @Override
         protected String doInBackground(String... params) {
 
             try {
+//while (!isCancelled()) {
+    // Do your long operations here and return the result
+    int dur = Integer.parseInt(params[0]);
+                int loopin=Integer.parseInt(params[1]);
+                int currentasync=Integer.parseInt(params[2]);
+    duration = dur * 1000;
+    resp = dur * 1000 + "";
 
-                // Do your long operations here and return the result
-                int dur= Integer.parseInt(params[0]);
-                duration=dur*1000;
-                resp = dur*1000 + "";
+    int z = dur;//for setting thread sleep time to decrease  and decrease loop for first photo and send to progress update too
 
-              int z=dur;//for setting thread sleep time to decrease  and decrease loop for first photo and send to progress update too
+    for (int i = 0; i < 2 * dur; i++) {
+        System.out.println("in dobckgnd before going to sleep in do bckgroundi"+i+" dur "+dur +" z "+z+" loopin "+loopin+" currentasync "+currentasync);
+        int it = i % 2;
+        System.out.println("in dobckgnd it value "+it);
+        if (it == 0) {
+            resp = z * 1000 + "&" + i +"&" + currentasync;
+            Thread.sleep(z * 1000);
+            z = z - 1;
+        } else {
+            resp = dur * 1000 + "&" + i+"&" + currentasync;
+            Thread.sleep(duration);
+        }
 
-               for(int i=0;i<2*dur;i++){
-                   //System.out.println("before going to sleep in do bckgroundi"+i+" dur"+dur +"z"+z);
-                    int it=i%2;
-                    //System.out.println("it value "+it);
-                    if(it==0   ) {
-                        resp = z*1000 + "&"+i ;
-                         Thread.sleep(z * 1000);
-                        z=z-1;
-                    }else {
-                        resp = dur*1000 + "&"+i;
-                        Thread.sleep(duration);
-                    }
+        publishProgress(resp + "");
 
-                   publishProgress(resp+"");
-
-               }//for
-                    resp="";
+    }//for
+    resp = "";
+//}
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
@@ -341,24 +407,96 @@ public class ViewFlipperActivity extends AppCompatActivity {
             return resp;
         }
 
+
         /*
          * (non-Javadoc)
          *
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
          */
+        @Override
+        protected void onProgressUpdate(String... text) {
+            //System.out.println("in  progressupdate text "+text[0]+"check out");
+           try {
+               String[] parts = text[0].split("&");// resp = dur * 1000 + "&" + i;
+               String part1 = parts[0]; //time or length of odd or even if o or even then decreasing time else full time
+               String part2 = parts[1]; // i
+               String part3=parts[2];//asyncarraynumber
+               System.out.println("part1 "+part1+" part2 "+part2+" part3 "+part3);
+               int time = 0;
+               String test = part1.trim();
+               if (test != "") {
+                   time = Integer.parseInt(part1);
+                   //  System.out.println("in  progressupdate time"+time +"check out");
+               }
+               if (time != 0) {
+
+                   int displayedChild = mViewFlipper.getDisplayedChild();
+                   int childCount = mViewFlipper.getChildCount();
+                   System.out.println("++++++++++++++ on progressupdate Displayedchild " + displayedChild + "part[1]or part2/i " + part2 + " time or duration to flip or part[0] " + time);
+                   int numtype = Integer.parseInt(part2);
+                   int it = numtype % 2;
+
+                   if (displayedChild == 0 && it == 0) {
+                       mViewFlipper.setFlipInterval(time);
+                       System.out.println(" 0000000000000th child on progressupdate displayed child 0 or first child time " + time + " i " + part2 + " it " + it);
+                       // Toast t=  Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+time+"sec",Toast.LENGTH_SHORT );
+                       //        t.show();
+                       mViewFlipper.showNext();
+                   } else if (displayedChild == 1 && it == 1) {
+                       mViewFlipper.setFlipInterval(duration);
+                       // Toast t=Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+duration+"sec",Toast.LENGTH_SHORT );
+                       // t.show();
+                       System.out.println("111111111111 child in  progressupdate displayed child others duration " + duration + " i " + part2 + " it " + it);
+                       if (numtype == ((2 * duration / 1000) - 1)) {
+                           System.out.println("loop last its last and no more flipping");
+                           if(looptime>1){
+                               System.out.println("loop last its last and no more flipping check out in loop");
+                               if(Integer.parseInt(part3)>0){
+                                   mViewFlipper.showPrevious();
+                                   System.out.println("loop last its last and no more flipping to previous");
+                               }
+                           }
+                           // while (isCancelled()==false)
+                           //   Thread.currentThread().
+
+                       } else {
+                           //System.out.println("loop not ended so its previos" );
+                           mViewFlipper.showPrevious();
+                       }
+                   } else {
+
+                       System.out.println("there are only 2 images 2 childs its not possible to come here  Displayedchild " + displayedChild + " ************ time " + time + "*********** i" + 1);
+                      // mViewFlipper.showPrevious();
+                   }
+
+               } else {//else time==0
+                   System.out.println("in run on progressupdate else time its not possible to run slideshow for zero time " + time + " whyyyyyyyyyyyyyyyyyyy");
+               }
+           }
+       catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        }//onprogress()
+        /*
+        * (non-Javadoc)
+        *
+        * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+        */
         @Override
         protected void onPostExecute(String result) {
             // execution of result of Long time consuming operation
-         //   finalResult.setText(result);
+            //   finalResult.setText(result);
             //int time=0;
             String test=result.trim();
             if ( test=="" ) {
                 //result="0";
                 //System.out.println("in run on postexec test " + test+"test");
                 //time = Integer.parseInt(result);
-              // if(time==0)
+                // if(time==0)
                 mViewFlipper.stopFlipping();
-              //  System.out.println("in run on postexece  " );
+                //  System.out.println("in run on postexece  " );
             }
 
 
@@ -377,59 +515,6 @@ public class ViewFlipperActivity extends AppCompatActivity {
             // example showing ProgessDialog
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
-         */
-        @Override
-        protected void onProgressUpdate(String... text) {
-            //System.out.println("in  progressupdate text "+text[0]+"check out");
-            String[] parts = text[0].split("&");
-            String part1 = parts[0]; //
-            String part2 = parts[1]; // i
-            int time=0;
-            String test=part1.trim();
-            if (test !="" ) {
-               time = Integer.parseInt(part1);
-              //  System.out.println("in  progressupdate time"+time +"check out");
-            }
-            if(time!=0){
-
-               int displayedChild = mViewFlipper.getDisplayedChild();
-               int childCount = mViewFlipper.getChildCount();
-                //System.out.println("++++++++++++++ on progressupdate Displayedchild " + displayedChild +"part2/i "+part2+" time "+time);
-                int numtype=Integer.parseInt(part2);
-                int it=numtype%2;
-
-               if (displayedChild == 0  && it==0) {
-                    mViewFlipper.setFlipInterval(time);
-                    System.out.println(" 0000000000000th child on progressupdate displayed child 0 or first child time " + time + " i " + part2 + " it " + it);
-                 // Toast t=  Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+time+"sec",Toast.LENGTH_SHORT );
-                  //        t.show();
-                    mViewFlipper.showNext();
-                }else if(displayedChild == 1 && it==1) {
-                    mViewFlipper.setFlipInterval(duration);
-                  // Toast t=Toast.makeText(ViewFlipperActivity.this, "displayedChild/image count"+displayedChild+"/"+childCount+"response for time"+duration+"sec",Toast.LENGTH_SHORT );
-                  // t.show();
-                   System.out.println("111111111111 child in  progressupdate displayed child others duration " + duration+" i "+part2+" it "+it);
-                    if(numtype==((2*duration/1000)-1)){
-                        //System.out.println("loop last its last and no more flipping" );
-                    }
-                     else {
-                        //System.out.println("loop not ended so its previos" );
-                                mViewFlipper.showPrevious();
-                    }
-                }else{
-                   System.out.println("there are only 2 images 2 childs its not possible to come here************ time" +time+"*********** i"+1);
-               }
-
-            }else {//else time==0
-                System.out.println("in run on progressupdate else time its not possible to run slideshow for zero time " + time +"whyyyyyyyyyyyyyyyyyyy");
-            }
-
-
-        }//onprogress()
     }//class aysnctask
 
 

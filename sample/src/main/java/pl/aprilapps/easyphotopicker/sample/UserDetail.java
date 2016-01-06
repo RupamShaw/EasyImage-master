@@ -11,6 +11,35 @@ public class UserDetail {
     int Duration;
     String floatingText;
     String NameReason;
+    Uri Music;
+     String MusicName;
+    int loopSlideShow;
+
+    public String getMusicName() {
+        return MusicName;
+    }
+
+    public void setMusicName(String musicName) {
+        MusicName = musicName;
+    }
+    public int getLoopSlideShow() {
+        return loopSlideShow;
+    }
+
+    public void setLoopSlideShow(int loopSlideShow) {
+        this.loopSlideShow = loopSlideShow;
+    }
+
+
+    public Uri getMusic() {
+        return Music;
+    }
+
+    public void setMusic(Uri music) {
+        Music = music;
+    }
+
+
 
     public Uri getImage2() {
         return Image2;

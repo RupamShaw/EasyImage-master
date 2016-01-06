@@ -210,7 +210,7 @@ public class EasyImage implements EasyImageConfig {
         return new File(imageUri);
     }
 
-    private static void writeToFile(InputStream in, File file) {
+    public static void writeToFile(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
             byte[] buf = new byte[1024];
