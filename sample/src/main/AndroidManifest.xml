@@ -16,8 +16,8 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".SelectDataActivity"
-            android:label="@string/title_activity_select_data"
+            android:name=".EasyImageActivity"
+            android:label="@string/title_activity_EasyImage"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

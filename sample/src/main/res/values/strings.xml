@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Easy Photo Picker</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_select_data">SelectDataActivity</string>
+    <string name="title_activity_EasyImage">EasyImageActivity</string>
     <string name="imageonfly">image on fly</string>
     <string name="firstimagebutton">Image#1</string>
     <string name="secondimagebutton">Image#2</string>

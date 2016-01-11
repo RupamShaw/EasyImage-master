@@ -145,8 +145,10 @@ public class ViewFlipperActivity extends AppCompatActivity {
         String[] imagelist = extras.getStringArray("listofimage");
          final int duration=extras.getInt("duration");
          int loop=extras.getInt("loop");
-
-        loop=loop+1;
+        if(loop==0)
+            loop=loop+1;
+System.out.println("loop in create start"+loop);
+      //  loop=loop+1;
 
         if (imagelist.length != 0) {
             for (int i = 0; i < imagelist.length; ++i) {

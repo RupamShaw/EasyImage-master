@@ -13,7 +13,7 @@ public class UserDetail {
     String NameReason;
     Uri Music;
      String MusicName;
-    int loopSlideShow;
+    int loopSlideShow=1;
 
     public String getMusicName() {
         return MusicName;

@@ -26,7 +26,7 @@ import java.util.List;
 
 import pl.aprilapps.easyphotopicker.EasyMusic;
 
-public class SelectDataActivity extends AppCompatActivity {
+public class EasyImageActivity extends AppCompatActivity {
     static final int REQ_IMAGE1 = 1;
     static final int REQ_IMAGE2 = 2;
     static final int RESULT_OK = 1;
@@ -39,7 +39,8 @@ public class SelectDataActivity extends AppCompatActivity {
     protected SeekBar durationSeekbar;
     protected ListView userDetailListView;
     protected TextView durationTextView;
-    protected SeekBar looptimeSeekBar;
+    protected TextView looptimesTextView;
+    protected SeekBar looptimesSeekBar;
     UserDetail userDetail;
     Button saveBtn;
     Button slideshowBtn;
@@ -59,7 +60,7 @@ public class SelectDataActivity extends AppCompatActivity {
         userDetail=new UserDetail();
 
        // userDetail.setLoopSlideShow(looptimeSeekBar.getValue());
-        looptimeSeekBar.setOnSeekBarChangeListener(
+        looptimesSeekBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     int progressvalue = 0;
 
@@ -74,7 +75,7 @@ public class SelectDataActivity extends AppCompatActivity {
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                       // durationTextView.setText("Duration seconds:: " + progressvalue + "/" + durationSeekbar.getMax());
+                       looptimesTextView.setText( progressvalue + "/" + looptimesSeekBar.getMax());
                        userDetail.setLoopSlideShow(progressvalue);
                     }
                 }
@@ -95,7 +96,7 @@ public class SelectDataActivity extends AppCompatActivity {
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                        durationTextView.setText("Duration seconds:: " + progressvalue + "/" + durationSeekbar.getMax());
+                        durationTextView.setText(progressvalue + "/" + durationSeekbar.getMax()+" seconds");
                         //userDetail.setDuration(progressvalue);
                     }
                 }
@@ -109,7 +110,9 @@ public class SelectDataActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-    }
+        SaveRetrieveDBTask  retrieveDB=new SaveRetrieveDBTask();
+        retrieveDB.execute("2");
+    }//oncreate
      class UserSlideNameAdapter extends ArrayAdapter<UserDetail>{
         private ArrayList<UserDetail> userDetails;
         private Context context;
@@ -149,20 +152,36 @@ public class SelectDataActivity extends AppCompatActivity {
                 holder.listImageView2=(ImageView)rowView.findViewById(R.id.listimageView2);
                holder.musicText=(TextView)rowView.findViewById(R.id.musiclistText);
                // System.out.println("before set for saving in list");
+               if(UserDetailpos.getNameReason()!=null)
                 holder.userName .setText(UserDetailpos.getNameReason());
+                else {
+                   holder.userName.setText("");
+                   UserDetailpos.setNameReason("");
+               }
                 holder.duration.setText(UserDetailpos.getDuration() + "");
-                holder.floatingText.setText(UserDetailpos.getFloatingText());
+                if(UserDetailpos.getFloatingText()!=null)
+                    holder.floatingText.setText(UserDetailpos.getFloatingText());
+                else {
+                    holder.floatingText.setText("");
+                    UserDetailpos.setFloatingText("");
+                }
                 holder.listImageView1.setImageURI(UserDetailpos.getImage1());
                 holder.listImageView2.setImageURI(UserDetailpos.getImage2());
-                holder.musicText.setText(UserDetailpos.getMusicName());
+                if(UserDetailpos.getMusicName()!=null)
+                 holder.musicText.setText(UserDetailpos.getMusicName());
+                else {
+                    holder.musicText.setText("");
+                    UserDetailpos.setMusicName("");
+                }
                 //System.out.println("all set after saving in list displayed ");
             }
            rowView.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
                    setUI(UserDetailpos);
+
                    // TODO Auto-generated method stub
-                   Toast.makeText(context, "You Clicked " + UserDetailpos.getNameReason()+" "+UserDetailpos.getDuration()+" "+UserDetailpos.getMusicName(), Toast.LENGTH_LONG).show();
+                   Toast.makeText(context, "You Clicked " +UserDetailpos.getNameReason()+" "+UserDetailpos.getDuration()+" "+UserDetailpos.getMusicName(), Toast.LENGTH_LONG).show();
                }
            });
 
@@ -186,8 +205,8 @@ public class SelectDataActivity extends AppCompatActivity {
             ud.setLoopSlideShow(userDetail.getLoopSlideShow());
             userDetailList.add(ud);
         }
-        SavetoDBTask savetoDB =new SavetoDBTask();
-        savetoDB.execute("rups tone");
+        SaveRetrieveDBTask savetoDB =new SaveRetrieveDBTask();
+        savetoDB.execute("1");
     //  userSlideNameAdapter =new UserSlideNameAdapter(this,R.layout.selectuserfromlist,userDetailList);
       //  ArrayAdapter<UserDetail> userSlideNameAdapter =new ArrayAdapter<UserDetail>(this,android.R.layout.simple_list_item_1,userDetailList);
 
@@ -195,7 +214,8 @@ public class SelectDataActivity extends AppCompatActivity {
         System.out.println("in savebutton");
     }
 
-    class SavetoDBTask extends AsyncTask<String ,Integer,ArrayList<UserDetail>>{
+    class SaveRetrieveDBTask extends AsyncTask<String ,Integer,ArrayList<UserDetail>>{
+
         @Override
         protected void onPostExecute(ArrayList<UserDetail> userDetailList) {
             super.onPostExecute(userDetailList);
@@ -207,8 +227,27 @@ public class SelectDataActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<UserDetail> doInBackground(String... params) {
-           //do here work of database
-            System.out.println("hello from async task");
+            int task = Integer.parseInt(params[0]);
+            //do here work of database
+            System.out.println("doinBCKGND start");
+            MyDBHandler myDBHandler = new MyDBHandler(getApplicationContext(), null, null, 1);
+            System.out.println("doinBCKGND 1");
+            if (task == 1) {
+                //  myDBHandler.open();
+                myDBHandler.addUserDetail(userDetail);
+                myDBHandler.close();
+            }else{
+                if (task == 2) {
+                  //  myDBHandler.open();
+                    userDetailList = myDBHandler.getUserDetail();
+                    myDBHandler.close();
+                } else
+                    System.out.println("not doing db work++++++++++++++");
+            }
+
+            System.out.println("doinBCKGND ends");
+
+
             return userDetailList;
         }
     }
@@ -247,7 +286,8 @@ public class SelectDataActivity extends AppCompatActivity {
     }
 
     private void findViewById(){
-        durationTextView=(TextView)findViewById(R.id.durationText);
+            durationTextView=(TextView)findViewById(R.id.durationText);
+        looptimesTextView=(TextView)findViewById(R.id.looptimesText);
        // toolbar = (Toolbar) findViewById(R.id.toolbar);
         imageView1=(ImageView) findViewById(R.id.imageView1);
         imageView2=(ImageView) findViewById(R.id.imageView2);
@@ -257,7 +297,7 @@ public class SelectDataActivity extends AppCompatActivity {
         userDetailListView=(ListView)findViewById(R.id.userDetailListView);
         saveBtn=(Button) findViewById(R.id.save_button);
         slideshowBtn=(Button) findViewById(R.id.slideshow_button);
-        looptimeSeekBar=(SeekBar)findViewById(R.id.looptimeSeekBar);
+        looptimesSeekBar=(SeekBar)findViewById(R.id.looptimesSeekBar);
        // fab = (FloatingActionButton) findViewById(R.id.fab);
     }
     public void  musicButtonClicked(View view){
@@ -282,7 +322,7 @@ public class SelectDataActivity extends AppCompatActivity {
     private void setUserDetail(){
         userDetail.setDuration(durationSeekbar.getProgress());
        userDetail.setFloatingText(floatingText.getText().toString());
-      userDetail.setLoopSlideShow(looptimeSeekBar.getProgress());
+      userDetail.setLoopSlideShow(looptimesSeekBar.getProgress());
        //userDetail.setImage1(imageView1.get;
     }
     @Override
@@ -295,20 +335,24 @@ public class SelectDataActivity extends AppCompatActivity {
 
     }
     private void setUI(UserDetail userDetail){
-        durationTextView.setText("Duration seconds: " + userDetail.getDuration() + "/" + durationSeekbar.getMax());
+        durationTextView.setText(userDetail.getDuration() + "/" + durationSeekbar.getMax()+" seconds");
+        looptimesTextView.setText( userDetail.getLoopSlideShow() + "/" + looptimesSeekBar.getMax());
+        musicNameTextView.setText(userDetail.getMusicName());
         imageView1.setImageURI(userDetail.getImage1());
         imageView2.setImageURI(userDetail.getImage2());
         floatingText.setText(userDetail.getFloatingText());
         durationSeekbar.setProgress(userDetail.getDuration());
-        looptimeSeekBar.setProgress(userDetail.getLoopSlideShow());
+        looptimesSeekBar.setProgress(userDetail.getLoopSlideShow());
     }
     private void setView(){
-        durationTextView.setText("Duration seconds: " + userDetail.getDuration() + "/" + durationSeekbar.getMax());
+        durationTextView.setText(userDetail.getDuration() + "/" + durationSeekbar.getMax()+" seconds");
+        looptimesTextView.setText(userDetail.getLoopSlideShow() + "/" + looptimesSeekBar.getMax());
+        musicNameTextView.setText(userDetail.getMusicName());
         imageView1.setImageURI(userDetail.getImage1());
         imageView2.setImageURI(userDetail.getImage2());
         floatingText.setText(userDetail.getFloatingText());
         durationSeekbar.setProgress(userDetail.getDuration());
-        looptimeSeekBar.setProgress(userDetail.getLoopSlideShow());
+        looptimesSeekBar.setProgress(userDetail.getLoopSlideShow());
     }
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {

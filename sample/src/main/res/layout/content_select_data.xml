@@ -75,7 +75,8 @@
             android:layout_height="20dp"
             android:layout_weight="0.34"
             android:text="Music Name"
-            android:id="@+id/musicNameText" />
+            android:id="@+id/musicNameText"
+            android:textAlignment="center" />
     </LinearLayout>
 
     <LinearLayout
@@ -94,7 +95,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linearLayout4"
+            android:id="@+id/buttonlinearlayoutH"
 
 
             android:layout_alignParentLeft="true"
@@ -105,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/savebutton"
                 android:id="@+id/save_button"
-                android:onClick="saveButtonClicked" />
+                android:onClick="saveButtonClicked"
+                android:layout_weight="0.5"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -113,8 +115,9 @@
                 android:text="@string/slideshowbutton"
                 android:id="@+id/slideshow_button"
                 android:onClick="slideshowButtonClicked"
-                android:layout_above="@+id/linearLayout4"
-                android:layout_centerHorizontal="true" />
+                android:layout_above="@+id/buttonlinearlayoutH"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="0.5"/>
 
         </LinearLayout>
 
@@ -128,40 +131,120 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:id="@+id/linearLayout8"
-            >
+            android:layout_height="62dp"
+            android:id="@+id/durationtimeslinearlayoutH"
+            android:weightSum="1.0">
 
-            <SeekBar
-                android:layout_width="200dp"
-                android:layout_height="19dp"
-                android:id="@+id/durationSeekBar"
-                android:max="60" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/durationlinearlayoutV"
+                android:layout_weight="0.50"
+                android:weightSum="1.0">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="19dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Times"
-                android:id="@+id/textView" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/durationtextlinearLayoutH"
+                    android:weightSum="1"
+                    android:layout_weight="0.50">
 
-            <SeekBar
-                android:layout_width="200dp"
-                android:layout_height="19dp"
-                android:id="@+id/looptimeSeekBar"
-                android:max="10" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Duration"
+                        android:id="@+id/durationlabel"
+                        android:layout_weight="0.50"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text=" 1/60 seconds"
+
+                        android:id="@+id/durationText"
+                        android:layout_gravity="center_horizontal"
+                        android:enabled="false"
+                        android:visibility="visible"
+                        android:textAlignment="viewStart"
+                        android:layout_weight="0.50"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/durationseeklinearlayoutH"
+                    android:layout_weight="0.50">
+
+                    <SeekBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/durationSeekBar"
+
+                        android:max="60"
+                        android:layout_weight="0.50"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/loopslinearLayoutV"
+                android:layout_weight="0.50"
+                android:weightSum="1.0">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/looptextlinearlayoutH"
+                    android:layout_weight="0.50"
+                    android:weightSum="1.0">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Times to loop"
+                        android:id="@+id/timeslabel"
+                        android:layout_weight="0.50"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="1/10"
+                        android:id="@+id/looptimesText"
+                        android:textAlignment="center"
+                        android:layout_weight="0.50"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loopseeklinearLayoutH"
+                    android:layout_weight="0.50"
+                    >
+
+                    <SeekBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/looptimesSeekBar"
+                        android:max="10"
+                        />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="duration of slideshow interval  in seconds"
-
-            android:id="@+id/durationText"
-            android:layout_gravity="center_horizontal"
-            android:enabled="false"
-            android:visibility="visible" />
 
         <ListView
             android:layout_width="wrap_content"
